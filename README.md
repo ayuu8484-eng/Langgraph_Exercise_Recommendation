@@ -1,35 +1,19 @@
-# 🏋️ AI 운동 추천 멀티에이전트 시스템
+# AI 운동 추천 멀티에이전트 시스템
 
 > **LangGraph + LangChain + Ollama**를 활용한 로컬 LLM 기반 다단계 멀티에이전트 파이프라인
 
 ---
 
-## 📌 프로젝트 개요
+## 프로젝트 개요
 
-사용자의 자연어 질문에서 신체 증상을 자동으로 추출하고, 맞춤형 운동을 추천하는 **멀티에이전트 AI 시스템**입니다.  
-세 개의 전문화된 에이전트가 순차적으로 협력하여 입력된 건강 고민을 분석하고 구체적인 운동 솔루션을 제공합니다.
+사용자의 자연어 질문에서 신체 증상을 자동으로 추출하고, 맞춤형 운동을 추천하는 **멀티에이전트 AI 시스템**
+세 개의 전문화된 에이전트가 순차적으로 협력하여 입력된 건강 고민을 분석하고 구체적인 운동 솔루션을 제공
 
 ```
 사용자 질문 → [추출 에이전트] → [매칭 에이전트] → [답변 에이전트] → 최종 추천
 ```
 
 ---
-
-## 🏗️ 시스템 아키텍처
-
-```mermaid
-graph TD
-    A([사용자 질문]) --> B[🔍 Extractor Agent\n증상 추출]
-    B --> C[🏃 Matcher Agent\n운동 후보 추천]
-    C --> D[✍️ Answer Agent\n최종 답변 생성]
-    D --> E([최종 응답 출력])
-
-    style A fill:#4A90D9,color:#fff
-    style B fill:#7B68EE,color:#fff
-    style C fill:#20B2AA,color:#fff
-    style D fill:#FF8C00,color:#fff
-    style E fill:#3CB371,color:#fff
-```
 
 ### 상태 흐름 (AgentState)
 
@@ -42,9 +26,9 @@ graph TD
 
 ---
 
-## 🤖 에이전트 구성
+## 에이전트 구성
 
-### 1. 🔍 Extractor Agent — 증상 추출
+### 1. Extractor Agent — 증상 추출
 
 ```python
 extractor_prompt = PromptTemplate.from_template("""
@@ -66,7 +50,7 @@ extractor_prompt = PromptTemplate.from_template("""
 
 ---
 
-### 2. 🏃 Matcher Agent — 운동 후보 매칭
+### 2. Matcher Agent — 운동 후보 매칭
 
 ```python
 matcher_prompt = PromptTemplate.from_template("""
@@ -88,7 +72,7 @@ matcher_prompt = PromptTemplate.from_template("""
 
 ---
 
-### 3. ✍️ Answer Agent — 최종 답변 생성
+### 3. Answer Agent — 최종 답변 생성
 
 ```python
 answer_prompt = PromptTemplate.from_template("""
@@ -104,7 +88,7 @@ answer_prompt = PromptTemplate.from_template("""
 
 ---
 
-## 🔄 LangGraph 파이프라인
+## LangGraph 파이프라인
 
 ```python
 workflow = StateGraph(AgentState)
@@ -126,9 +110,11 @@ app = workflow.compile()
 LangGraph의 `StateGraph`를 통해 각 에이전트를 **노드**로 등록하고, **엣지**로 실행 순서를 명시적으로 연결합니다.  
 에이전트 간 데이터는 `AgentState` TypedDict를 통해 공유되며, 각 노드는 상태를 변환해 다음 노드로 전달합니다.
 
+<img width="108" height="432" alt="image" src="https://github.com/user-attachments/assets/b0b623bc-ac2c-4177-9ab4-241e80a7e4d0" />
+
 ---
 
-## 🛠️ 기술 스택
+## 기술 스택
 
 | 분류 | 기술 | 설명 |
 |---|---|---|
@@ -138,65 +124,3 @@ LangGraph의 `StateGraph`를 통해 각 에이전트를 **노드**로 등록하�
 | **LLM 모델** | [EXAONE 3.5 2.4B](https://www.lgresearch.ai/) | LG AI Research의 한국어 특화 소형 언어모델 |
 | **언어** | Python 3.10+ | 전체 파이프라인 구현 |
 | **실행 환경** | Jupyter Notebook | 개발 및 시각화 |
-
----
-
-## ✨ 주요 특징
-
-- **완전 로컬 실행**: 외부 API 키 없이 Ollama를 통해 로컬에서 LLM 구동
-- **한국어 최적화**: EXAONE 3.5 모델을 활용한 자연스러운 한국어 처리
-- **관심사 분리**: 각 에이전트가 단일 책임을 가져 유지보수 및 확장 용이
-- **명시적 상태 관리**: `TypedDict` 기반 타입 안전 상태 공유
-- **시각적 그래프 확인**: `draw_mermaid_png()`로 파이프라인 구조 시각화 가능
-
----
-
-## 🚀 실행 방법
-
-### 1. 사전 준비
-
-```bash
-# Ollama 설치 후 모델 다운로드
-ollama pull exaone3.5:2.4b
-```
-
-### 2. 패키지 설치
-
-```bash
-pip install langchain langchain-community langgraph
-```
-
-### 3. 실행
-
-```python
-query = "체력이 안좋고, 살이 계속 찌는데 어떤 운동을 할까?"
-result = app.invoke({"query": query})
-print(result["result"])
-```
-
----
-
-## 📁 프로젝트 구조
-
-```
-📦 exercise-recommendation-agent
- ┣ 📜 main.py           # 메인 에이전트 파이프라인
- ┣ 📓 notebook.ipynb    # Jupyter 실습 노트북
- ┗ 📄 README.md         # 프로젝트 소개
-```
-
----
-
-## 🔮 향후 개선 방향
-
-- [ ] 조건부 엣지(Conditional Edge)를 활용한 분기 로직 추가
-- [ ] 사용자 나이·체형 등 추가 정보 입력 지원
-- [ ] RAG(검색 증강 생성) 연동으로 운동 DB 기반 추천 강화
-- [ ] 웹 UI 연동 (Streamlit / Gradio)
-- [ ] 운동 루틴 스케줄 자동 생성 에이전트 추가
-
----
-
-## 📄 라이선스
-
-MIT License
