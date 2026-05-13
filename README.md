@@ -114,6 +114,20 @@ LangGraph의 `StateGraph`를 통해 각 에이전트를 **노드**로 등록하�
 
 ---
 
+## 실행 결과
+
+```python
+query = "체력이 안좋고, 살이 계속 찌는데 어떤 운동을 할까?"
+result = app.invoke({"query": query})
+
+print("============================== 최종 응답:")
+print(result["result"])
+```
+
+<img width="1790" height="366" alt="image" src="https://github.com/user-attachments/assets/83d23c87-d957-455c-99b1-1b15cf1bebdf" />
+
+---
+
 ## 기술 스택
 
 | 분류 | 기술 | 설명 |
